@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rädda Valpen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="stage">
+    <h1 id="title">Rädda valpen innan det är för sent!</h1>
+    <p class="timer">Tid kvar: <span id="countdown">60</span> s</p>
+
+    <div class="guillotine">
+      <div class="frame frame--left"></div>
+      <div class="frame frame--right"></div>
+      <div class="frame frame--top"></div>
+      <div id="blade" class="blade"></div>
+      <div class="puppy" aria-label="Hundvalp">🐶</div>
+    </div>
+
+    <button id="save-button" class="save-button">Rädda hundvalp</button>
+    <p class="stats">Stängda popups: <span id="closed-count">0</span></p>
+  </main>
+
+  <div id="popup-layer" class="popup-layer"></div>
+
+  <div id="result" class="result" hidden></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
