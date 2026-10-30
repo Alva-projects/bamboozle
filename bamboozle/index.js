@@ -4,6 +4,7 @@ const CONFIG = {
   popupsPerClose: 2,
   maxPopups: 50,
   secretClicksToWin: 3,
+  volume: 0.8, // 0–1, högt som standard
 };
 
 const POPUP_MESSAGES = [
@@ -28,7 +29,26 @@ let closedCount = 0;
 let zIndex = 1;
 let gameOver = false;
 let timerId = null;
+let audioCtx = null;
 
+// ===== Ljud =====
+// Skapas först vid första klicket – webbläsare tillåter inte ljud innan användaren interagerat.
+function getAudioContext() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+const goatSound = new Audio("freesound_community-man-shout-like-a-goat-105005.mp3");
+
+function playErrorSound(delay = 0) {
+  setTimeout(() => {
+    const goat = goatSound.cloneNode(); // klon så att flera getter kan skrika samtidigt
+    goat.volume = CONFIG.volume;
+    goat.play();
+  }, delay * 1000);
+}
+
+// ===== Popups =====
 function randomItem(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
@@ -71,6 +91,7 @@ function spawnPopups(count) {
   const room = CONFIG.maxPopups - popupLayer.children.length;
   for (let i = 0; i < Math.min(count, room); i++) {
     createPopup();
+    playErrorSound(i * 0.15); // liten förskjutning så två popups ger två tydliga ljud
   }
 }
 
@@ -82,6 +103,7 @@ function closePopup(popup) {
   spawnPopups(CONFIG.popupsPerClose);
 }
 
+// ===== Spelflöde =====
 function startCountdown() {
   if (timerId) return;
   timerId = setInterval(tick, 1000);
