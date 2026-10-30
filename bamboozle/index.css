@@ -1,11 +1,21 @@
 :root {
-  --bg: #1b1b22;
-  --text: #f4f1ea;
+  --bg: #121015;
+  --text: #ece4d2;
   --accent: #e63946;
-  --wood: #8b5a2b;
-  --steel: #c9ced6;
-  --popup-bg: #fffbe6;
-  --popup-text: #222;
+  --wood-dark: #4a2c14;
+  --wood: #7a4a22;
+  --wood-light: #a06a3a;
+  --steel-light: #eef1f5;
+  --steel: #b7bec7;
+  --steel-dark: #6f7782;
+  --iron: #2b2b2e;
+  --popup-bg: #f4f4f5;
+  --popup-text: #1d1d1f;
+  --popup-primary: #2f6fde;
+
+  /* Trä med ådring: tunna mörka ränder ovanpå en rundad ljusgradient */
+  --grain: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 5px, rgba(255, 255, 255, 0.05) 5px 6px, transparent 6px 11px);
+  --grain-h: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 5px, rgba(255, 255, 255, 0.05) 5px 6px, transparent 6px 11px);
 }
 
 * { box-sizing: border-box; }
@@ -13,7 +23,9 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 30%, rgba(255, 214, 150, 0.14), transparent 70%),
+    linear-gradient(180deg, #1c1920 0%, var(--bg) 60%, #0a090c 100%);
   color: var(--text);
   font-family: system-ui, sans-serif;
   display: flex;
@@ -24,64 +36,231 @@ body {
 
 .stage { text-align: center; padding: 16px; }
 
-h1 { margin: 0 0 8px; user-select: none; }
+h1 {
+  margin: 0 0 8px;
+  user-select: none;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 0 #000, 0 0 24px rgba(230, 57, 70, 0.25);
+}
 
-.timer { font-size: 1.2rem; color: var(--accent); }
+.timer {
+  display: inline-block;
+  margin: 4px 0 0;
+  padding: 6px 14px;
+  font-family: "Courier New", monospace;
+  font-size: 1.1rem;
+  color: #ff4d4d;
+  background: #140707;
+  border: 1px solid #3a1414;
+  border-radius: 4px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 6px rgba(255, 60, 60, 0.8);
+}
+
+#countdown { font-weight: bold; }
+
+/* ===== Giljotin ===== */
 
 .guillotine {
   position: relative;
-  width: 200px;
-  height: 260px;
-  margin: 24px auto;
+  width: 240px;
+  height: 340px;
+  margin: 28px auto 24px;
+  /* Klipp bara ovankanten så att repet försvinner bakom bjälken */
+  clip-path: inset(0 -200px -200px -200px);
 }
 
-.frame { position: absolute; background: var(--wood); }
-.frame--left  { left: 20px;  top: 0; width: 16px; height: 100%; }
-.frame--right { right: 20px; top: 0; width: 16px; height: 100%; }
-.frame--top   { left: 20px; right: 20px; top: 0; height: 16px; }
+.beam {
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 16px;
+  z-index: 3;
+  background: var(--grain), linear-gradient(180deg, var(--wood-light), var(--wood) 50%, var(--wood-dark));
+  border-radius: 2px;
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.5);
+}
+
+.post {
+  position: absolute;
+  top: 0;
+  width: 22px;
+  height: 300px;
+  z-index: 2;
+  background: var(--grain-h), linear-gradient(90deg, var(--wood-dark), var(--wood-light) 35%, var(--wood) 70%, var(--wood-dark));
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.4);
+}
+.post--left  { left: 34px; }
+.post--right { right: 34px; }
+
+/* Spår i stolparna som bladet glider i */
+.post::after {
+  content: "";
+  position: absolute;
+  top: 16px;
+  bottom: 0;
+  width: 3px;
+  background: rgba(0, 0, 0, 0.45);
+}
+.post--left::after  { right: 0; }
+.post--right::after { left: 0; }
 
 .blade {
   position: absolute;
-  left: 36px;
-  right: 36px;
+  left: 56px;
+  right: 56px;
   top: 16px;
-  height: 40px;
-  background: linear-gradient(170deg, var(--steel) 60%, #8a9099 100%);
-  clip-path: polygon(0 0, 100% 0, 100% 40%, 0 100%);
+  height: 70px;
+  z-index: 1;
   transition: top 1s linear;
+}
+
+/* Repet upp till bjälken */
+.blade::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 3px;
+  height: 400px;
+  transform: translateX(-50%);
+  background: repeating-linear-gradient(160deg, #c9b48a 0 3px, #8e7a52 3px 5px);
+}
+
+.blade__weight {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 28px;
+  background:
+    radial-gradient(circle at 12px 50%, #777 0 2px, transparent 3px),
+    radial-gradient(circle at calc(100% - 12px) 50%, #777 0 2px, transparent 3px),
+    linear-gradient(180deg, #48484d, var(--iron) 60%, #18181a);
+  border-radius: 2px;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.blade__steel {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  right: 0;
+  height: 42px;
+  background: linear-gradient(100deg, var(--steel-dark), var(--steel-light) 35%, var(--steel) 60%, var(--steel-dark));
+  clip-path: polygon(0 0, 100% 0, 100% 30%, 0 100%);
+}
+
+/* Slipad egg längs den sneda kanten */
+.blade__steel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top right, transparent 46%, rgba(255, 255, 255, 0.95) 49%, #dfe4ea 53%, transparent 62%);
+}
+
+.lunette {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  height: 28px;
+  z-index: 2;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+.lunette--top {
+  top: 244px;
+  background:
+    radial-gradient(circle 21px at 50% 100%, #0c0a08 19px, var(--wood-dark) 20px, transparent 21px),
+    var(--grain), linear-gradient(180deg, var(--wood-light), var(--wood));
+}
+.lunette--bottom {
+  top: 272px;
+  border-top: 1px solid rgba(0, 0, 0, 0.55);
+  background:
+    radial-gradient(circle 21px at 50% 0, #0c0a08 19px, var(--wood-dark) 20px, transparent 21px),
+    var(--grain), linear-gradient(180deg, var(--wood), var(--wood-dark));
 }
 
 .puppy {
   position: absolute;
-  bottom: 10px;
+  top: 272px;
   left: 50%;
-  transform: translateX(-50%);
-  font-size: 64px;
+  z-index: 3;
+  font-size: 38px;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.6));
 }
+
+.base {
+  position: absolute;
+  top: 300px;
+  left: -14px;
+  right: -14px;
+  height: 26px;
+  z-index: 2;
+  background: var(--grain), linear-gradient(180deg, var(--wood-light) 0 3px, var(--wood) 3px, var(--wood-dark));
+  border-radius: 2px;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.7);
+}
+
+.basket {
+  position: absolute;
+  top: 304px;
+  left: 50%;
+  width: 74px;
+  height: 26px;
+  z-index: 4;
+  transform: translateX(-50%);
+  background:
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.25) 0 2px, transparent 2px 6px),
+    repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.25) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, #c49a5a, #8a6430);
+  border-top: 4px solid #6e4c22;
+  border-radius: 2px 2px 26px 26px / 2px 2px 18px 18px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== Knapp ===== */
 
 .save-button {
-  font-size: 1.3rem;
-  padding: 14px 28px;
-  border: none;
+  font-size: 1.2rem;
+  padding: 14px 30px;
+  border: 1px solid #7d1019;
   border-radius: 8px;
-  background: var(--accent);
+  background: linear-gradient(180deg, #f0525d, #b8202c);
   color: white;
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.35);
   cursor: pointer;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.35),
+    0 4px 0 #6d0e16,
+    0 8px 16px rgba(0, 0, 0, 0.5);
+  transition: transform 0.05s, box-shadow 0.05s;
 }
-.save-button:hover { filter: brightness(1.1); }
+.save-button:hover { filter: brightness(1.08); }
+.save-button:active {
+  transform: translateY(3px);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.35), 0 1px 0 #6d0e16, 0 3px 8px rgba(0, 0, 0, 0.5);
+}
 
-.stats { opacity: 0.6; font-size: 0.9rem; }
+.stats { opacity: 0.55; font-size: 0.85rem; margin-top: 18px; }
+
+/* ===== Popups ===== */
 
 .popup-layer { position: fixed; inset: 0; pointer-events: none; }
 
 .popup {
   position: absolute;
-  width: min(300px, 90vw);
+  width: min(320px, 90vw);
   background: var(--popup-bg);
   color: var(--popup-text);
-  border: 2px solid #333;
-  border-radius: 6px;
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+  border: 1px solid #8f8f94;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
   pointer-events: auto;
   animation: pop-in 0.15s ease-out;
 }
@@ -90,25 +269,61 @@ h1 { margin: 0 0 8px; user-select: none; }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #333;
-  color: white;
-  padding: 4px 8px;
-  font-size: 0.85rem;
+  background: linear-gradient(180deg, #eaeaec, #d3d3d7);
+  border-bottom: 1px solid #b0b0b5;
+  color: #333;
+  padding: 5px 6px 5px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
 }
 
 .popup__close {
+  width: 22px;
+  height: 22px;
+  padding: 0;
   background: none;
   border: none;
-  color: white;
-  font-size: 1.1rem;
+  border-radius: 4px;
+  color: #555;
+  font-size: 13px;
+  line-height: 22px;
+  cursor: pointer;
+}
+.popup__close:hover { background: #e5484d; color: white; }
+
+.popup__body {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 14px 10px;
+}
+.popup__body p { margin: 2px 0 0; line-height: 1.4; text-align: left; }
+.popup__icon { font-size: 28px; line-height: 1; }
+
+.popup__actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; padding: 4px 14px 14px; }
+
+.popup__actions button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
   cursor: pointer;
 }
 
-.popup__body { padding: 12px; }
-
-.popup__actions { display: flex; gap: 8px; justify-content: flex-end; padding: 0 12px 12px; }
-
-.popup__actions button { padding: 6px 10px; cursor: pointer; }
+/* Klassiskt mörkt mönster: "nej" är en blek länk, "ja" en stor blå knapp */
+.popup__actions [data-action="no"] {
+  background: none;
+  border: none;
+  color: #8a8a90;
+  font-size: 11px;
+  text-decoration: underline;
+}
+.popup__actions [data-action="yes"] {
+  background: linear-gradient(180deg, #4b88f0, var(--popup-primary));
+  border: 1px solid #1f56b3;
+  color: white;
+  font-weight: 600;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.25);
+}
 
 @keyframes pop-in {
   from { transform: scale(0.6); opacity: 0; }

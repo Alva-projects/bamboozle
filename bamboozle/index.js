@@ -8,12 +8,12 @@ const CONFIG = {
 };
 
 const POPUP_MESSAGES = [
-  { title: "Viktigt meddelande", text: "Är du SÄKER på att du vill rädda valpen?", yes: "Ja", no: "Nej, jag hatar valpar" },
-  { title: "Cookies 🍪", text: "Valpen behöver cookies för att överleva. Godkänn alla?", yes: "Godkänn alla", no: "Låt valpen svälta" },
-  { title: "Nyhetsbrev", text: "Prenumerera på Giljotin Weekly för att fortsätta!", yes: "Prenumerera", no: "Jag gillar inte att läsa" },
-  { title: "Uppdatering", text: "Valp.exe behöver uppdateras (3 av 847 filer).", yes: "Uppdatera nu", no: "Påminn mig om 5 sek" },
-  { title: "Undersökning", text: "Hur nöjd är du med att stänga popups?", yes: "Mycket nöjd", no: "Extremt nöjd" },
-  { title: "Varning!", text: "Ditt valpkonto är på väg att gå ut.", yes: "Förnya", no: "Avbryt (rekommenderas inte)" },
+  { icon: "⚠️", title: "Viktigt meddelande", text: "Är du SÄKER på att du vill rädda valpen?", yes: "Ja", no: "Nej, jag hatar valpar" },
+  { icon: "🍪", title: "Cookies 🍪", text: "Valpen behöver cookies för att överleva. Godkänn alla?", yes: "Godkänn alla", no: "Låt valpen svälta" },
+  { icon: "📰", title: "Nyhetsbrev", text: "Prenumerera på Giljotin Weekly för att fortsätta!", yes: "Prenumerera", no: "Jag gillar inte att läsa" },
+  { icon: "🔄", title: "Uppdatering", text: "Valp.exe behöver uppdateras (3 av 847 filer).", yes: "Uppdatera nu", no: "Påminn mig om 5 sek" },
+  { icon: "📋", title: "Undersökning", text: "Hur nöjd är du med att stänga popups?", yes: "Mycket nöjd", no: "Extremt nöjd" },
+  { icon: "⏳", title: "Varning!", text: "Ditt valpkonto är på väg att gå ut.", yes: "Förnya", no: "Avbryt (rekommenderas inte)" },
 ];
 
 const saveButton = document.getElementById("save-button");
@@ -70,7 +70,10 @@ function createPopup() {
       <span>${msg.title}</span>
       <button class="popup__close" aria-label="Stäng">✕</button>
     </div>
-    <div class="popup__body">${msg.text}</div>
+    <div class="popup__body">
+      <span class="popup__icon">${msg.icon}</span>
+      <p>${msg.text}</p>
+    </div>
     <div class="popup__actions">
       <button data-action="no">${msg.no}</button>
       <button data-action="yes">${msg.yes}</button>
