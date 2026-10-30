@@ -1,11 +1,13 @@
 // ===== Konfiguration =====
 const CONFIG = {
-  countdownSeconds: 20,
+  countdownSeconds: 15,
   correctionsNeeded: 5, // så många lyckade klick på "Ändra kurs" för att rädda valpen
   dodgeChance: 0.6, // risk att knappen flyr när muspekaren närmar sig
   correctionStep: 7, // % uppåt per kurskorrigering
   secretClicksToWin: 3,
   volume: 0.8,
+  minDodgeDistance: 50, // px mellan muspekaren och knappens nya position
+  dodgeCheckInterval: 100, // ms mellan nya flykt-försök medan musen är över knappen
 };
 
 const LOG_ENTRIES = {
@@ -119,16 +121,62 @@ function endGame(won) {
 }
 
 // ===== Knappen som inte vill bli klickad =====
-function dodge() {
-  if (gameOver || Math.random() > CONFIG.dodgeChance) return;
-  const area = controls.getBoundingClientRect();
-  const maxX = area.width - steerButton.offsetWidth;
-  const maxY = area.height - steerButton.offsetHeight;
-  steerButton.style.left = `${Math.random() * maxX}px`;
-  steerButton.style.top = `${Math.random() * maxY}px`;
+// Avstånd från en punkt till närmaste kant av en rektangel (0 om punkten är inuti)
+function distanceToRect(x, y, rect) {
+  const dx = Math.max(rect.left - x, 0, x - rect.right);
+  const dy = Math.max(rect.top - y, 0, y - rect.bottom);
+  return Math.hypot(dx, dy);
 }
 
-steerButton.addEventListener("pointerenter", dodge);
+function dodge(event) {
+  if (gameOver || Math.random() > CONFIG.dodgeChance) return;
+
+  const area = controls.getBoundingClientRect();
+  const width = steerButton.offsetWidth;
+  const height = steerButton.offsetHeight;
+  const maxX = area.width - width;
+  const maxY = area.height - height;
+
+  let best = null;
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    const rect = {
+      left: area.left + x,
+      top: area.top + y,
+      right: area.left + x + width,
+      bottom: area.top + y + height,
+    };
+    const distance = distanceToRect(event.clientX, event.clientY, rect);
+
+    if (!best || distance > best.distance) best = { x, y, distance };
+    if (distance >= CONFIG.minDodgeDistance) break;
+  }
+
+  steerButton.style.left = `${best.x}px`;
+  steerButton.style.top = `${best.y}px`;
+}
+
+let hoverTimer = null;
+let pointer = { clientX: 0, clientY: 0 };
+
+function startHoverCheck(event) {
+  pointer = { clientX: event.clientX, clientY: event.clientY };
+  stopHoverCheck();
+  dodge(pointer);
+  if (!gameOver) hoverTimer = setInterval(() => dodge(pointer), CONFIG.dodgeCheckInterval);
+}
+
+function stopHoverCheck() {
+  clearInterval(hoverTimer);
+  hoverTimer = null;
+}
+
+steerButton.addEventListener("pointerenter", startHoverCheck);
+steerButton.addEventListener("pointermove", (event) => {
+  pointer = { clientX: event.clientX, clientY: event.clientY };
+});
+steerButton.addEventListener("pointerleave", stopHoverCheck);
 
 steerButton.addEventListener("click", () => {
   if (gameOver) return;
@@ -143,6 +191,7 @@ title.addEventListener("click", (event) => {
   if (event.detail === CONFIG.secretClicksToWin && !gameOver) escape();
 });
 
+// ===== Start =====
 updateCourse();
 addLog(LOG_ENTRIES[20]);
 frameId = requestAnimationFrame(frame);

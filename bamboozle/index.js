@@ -4,8 +4,8 @@ const CONFIG = {
   popupsPerClose: 4,
   maxPopups: 50,
   secretClicksToWin: 3,
-  popupsToSpace: 3, // efter så många stängda popups skickas valpen till rymden
-  volume: 0.8, // 0–1, högt som standard
+  popupsToSpace: 5, // efter så många stängda popups skickas valpen till rymden
+  volume: 0.9, // 0–1, högt som standard
 };
 
 const POPUP_MESSAGES = [
