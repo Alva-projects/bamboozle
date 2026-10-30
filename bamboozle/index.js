@@ -1,6 +1,6 @@
 // ===== Konfiguration =====
 const CONFIG = {
-  countdownSeconds: 60,
+  countdownSeconds:20,
   popupsPerClose: 2,
   maxPopups: 50,
   secretClicksToWin: 3,
