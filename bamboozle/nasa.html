@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NASA – Uppdrag VALP-1</title>
+  <link rel="stylesheet" href="nasa.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand__mark">NASA</span>
+      <span class="brand__sub">Nationella Avdelningen för Svävande Automobiler</span>
+    </div>
+    <nav class="nav">
+      <a href="#">Uppdrag</a>
+      <a href="#">Valpar i rymden</a>
+      <a href="#">Flygande bilar</a>
+      <a href="#" class="nav__live">● LIVE</a>
+    </nav>
+  </header>
+
+  <main class="mission">
+    <div class="mission__head">
+      <div>
+        <p class="eyebrow">Akut läge · Uppdrag VALP-1</p>
+        <h1 id="title">Valpen är på kollisionskurs med en satellit!</h1>
+      </div>
+      <p class="clock">T−<span id="countdown">20</span> s</p>
+    </div>
+
+    <section class="feed">
+      <div class="feed__label">● LIVEBILD · KAMERA 3</div>
+      <div id="scene" class="scene">
+        <div class="earth"></div>
+        <div id="satellite" class="satellite">🛰️</div>
+        <div id="car" class="car">
+          <span class="car__puppy">🐶</span>
+          <span class="car__body">🚗</span>
+          <span class="car__flame"></span>
+        </div>
+        <div id="boom" class="boom" hidden>💥</div>
+      </div>
+
+      <div id="controls" class="controls">
+        <button id="steer-button" class="steer-button">Ändra kurs</button>
+      </div>
+    </section>
+
+    <aside class="panels">
+      <div class="panel">
+        <h2>Telemetri</h2>
+        <dl class="telemetry">
+          <dt>Avstånd till satellit</dt><dd><span id="distance">4200</span> km</dd>
+          <dt>Hastighet</dt><dd>28 000 km/h</dd>
+          <dt>Kurskorrigering</dt><dd><span id="corrections">0</span> / <span id="corrections-needed">5</span></dd>
+          <dt>Valpens humör</dt><dd id="mood">Glad</dd>
+        </dl>
+      </div>
+      <div class="panel">
+        <h2>Uppdragslogg</h2>
+        <ol id="log" class="log"></ol>
+      </div>
+    </aside>
+  </main>
+
+  <div id="result" class="result" hidden></div>
+
+  <script src="nasa.js"></script>
+</body>
+</html>

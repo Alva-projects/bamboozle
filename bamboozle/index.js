@@ -1,9 +1,10 @@
 // ===== Konfiguration =====
 const CONFIG = {
   countdownSeconds:20,
-  popupsPerClose: 2,
+  popupsPerClose: 4,
   maxPopups: 50,
   secretClicksToWin: 3,
+  popupsToSpace: 3, // efter så många stängda popups skickas valpen till rymden
   volume: 0.8, // 0–1, högt som standard
 };
 
@@ -103,6 +104,10 @@ function closePopup(popup) {
   popup.remove();
   closedCount++;
   closedCountEl.textContent = closedCount;
+  if (closedCount >= CONFIG.popupsToSpace) {
+    goToSpace();
+    return;
+  }
   spawnPopups(CONFIG.popupsPerClose);
 }
 
@@ -133,6 +138,15 @@ function endGame(won) {
   resultEl.innerHTML = won
     ? "🎉 Valpen är räddad! 🐶"
     : "⏰ För sent!<br><small></small>";
+}
+
+function goToSpace() {
+  gameOver = true;
+  clearInterval(timerId);
+  popupLayer.innerHTML = "";
+  resultEl.hidden = false;
+  resultEl.innerHTML = "📡 Inkommande sändning från NASA…<br><small>Valpen har lämnat giljotinen.</small>";
+  setTimeout(() => { window.location.href = "nasa.html"; }, 1500);
 }
 
 saveButton.addEventListener("click", () => {
